@@ -49,7 +49,11 @@ class FirstFragment : Fragment() {
 
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-            googleSignInSample()
+//            googleSignInSample()
+            activity?.let {
+                val credentialSignInManager = CredentialSignInManager(it)
+                credentialSignInManager.googleSignInWithCredentialManager()
+            }
         }
     }
 
