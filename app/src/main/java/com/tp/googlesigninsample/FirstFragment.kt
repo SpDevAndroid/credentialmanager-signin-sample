@@ -53,9 +53,9 @@ class FirstFragment : Fragment() {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 //            googleSignInSample()
 //            startCredentialManagerSignIn()
-//            startGoogleIdentitySignIn()
+            startGoogleIdentitySignIn()
 
-            requestGmailReadOnlyAuthorization()
+//            requestGmailReadOnlyAuthorization()
         }
 
     }
@@ -179,7 +179,7 @@ class FirstFragment : Fragment() {
         registerForActivityResult<IntentSenderRequest, ActivityResult>(
             ActivityResultContracts.StartIntentSenderForResult()
         ) { result: ActivityResult ->
-            identitySignInManager?.handleSignInResult(result)
+            identitySignInManager?.handleSignInResult(result, dataAccessAuthorizationLauncher)
         }
 
     private val dataAccessAuthorizationLauncher =

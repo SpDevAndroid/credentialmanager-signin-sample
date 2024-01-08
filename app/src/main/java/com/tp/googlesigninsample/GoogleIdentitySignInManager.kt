@@ -41,7 +41,7 @@ class GoogleIdentitySignInManager(private val activity: FragmentActivity?) {
         }
     }
 
-    fun handleSignInResult(result: ActivityResult) {
+    fun handleSignInResult(result: ActivityResult, authorizationLauncherIntent: ActivityResultLauncher<IntentSenderRequest>) {
         Log.d(TAG, "handleSignInResult() called()")
         if (result.resultCode == Activity.RESULT_OK) {
             try {
@@ -54,6 +54,8 @@ class GoogleIdentitySignInManager(private val activity: FragmentActivity?) {
                     Log.d(TAG, "handleSignInResult() idToken : $googleIdToken")
                     Log.d(TAG, "handleSignInResult() credential : $credential")
 
+                    /** **/
+                    requestGmailReadOnlyAccess(authorizationLauncherIntent)
                 }
             } catch (e: ApiException) {
                 // The ApiException status code indicates the detailed failure reason.
