@@ -1,4 +1,4 @@
-package com.example.googlesigninsample
+package com.tp.googlesigninsample
 
 import org.junit.Test
 

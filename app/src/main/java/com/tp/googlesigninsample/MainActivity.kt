@@ -1,4 +1,4 @@
-package com.example.googlesigninsample
+package com.tp.googlesigninsample
 
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -9,6 +9,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import com.example.googlesigninsample.R
 import com.example.googlesigninsample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

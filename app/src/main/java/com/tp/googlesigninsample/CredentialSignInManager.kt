@@ -1,4 +1,4 @@
-package com.example.googlesigninsample
+package com.tp.googlesigninsample
 
 import android.util.Log
 import androidx.credentials.CredentialManager
@@ -10,6 +10,7 @@ import androidx.credentials.PublicKeyCredential
 import androidx.credentials.exceptions.GetCredentialException
 
 import androidx.fragment.app.FragmentActivity
+import com.example.googlesigninsample.R
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -27,7 +28,6 @@ class CredentialSignInManager(private val activity: FragmentActivity?) {
             val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
                 .setServerClientId(clientId)
-                .setAutoSelectEnabled(true)
                 .build()
 
             val request = GetCredentialRequest.Builder()

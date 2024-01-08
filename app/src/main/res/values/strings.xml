@@ -44,7 +44,7 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
-    <string name="server_client_id_web">1086122127945-9b0j479o5jcjb4uhrvvfi2omv8ple5t3.apps.googleusercontent.com</string>        <!--    web-->
-    <string name="server_client_id">1086122127945-os0p05i820k3c99kicaag9e7jn50lhrs.apps.googleusercontent.com</string>   <!--    app-->
+    <string name="server_client_id_web">843584698777-b4nmp7i4i0i193renc5rpuo1aarhlge1.apps.googleusercontent.com</string>        <!--    web-->
+    <string name="server_client_id">843584698777-qa9ccpchrq3jiet7dglesl806ct7l5cs.apps.googleusercontent.com</string>   <!--    app-->
 
 </resources>
