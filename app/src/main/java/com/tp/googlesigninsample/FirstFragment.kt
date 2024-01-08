@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.example.googlesigninsample.R
@@ -32,7 +33,8 @@ class FirstFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val tag ="GOOGLE_SIGN_IN"
+    private val tag = "GOOGLE_SIGN_IN"
+    private var identitySignInManager: GoogleIdentitySignInManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,10 +52,8 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 //            googleSignInSample()
-            activity?.let {
-                val credentialSignInManager = CredentialSignInManager(it)
-                credentialSignInManager.googleSignInWithCredentialManager()
-            }
+//            startCredentialManagerSignIn()
+            startGoogleIdentitySignIn()
         }
     }
 
@@ -64,13 +64,14 @@ class FirstFragment : Fragment() {
 // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
 
         val clientId = getString(R.string.server_client_id_web)
-        val gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestScopes( Scope(Scopes.DRIVE_APPFOLDER)) //todo need to explore all option to chose correct one finally DRIVE_APPFOLDER
-            .requestServerAuthCode(clientId)
-            .requestIdToken(clientId)
-            .requestScopes(Scope("https://www.googleapis.com/auth/gmail.readonly"))
-            .requestEmail()
-            .build()
+        val gso: GoogleSignInOptions =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(Scope(Scopes.DRIVE_APPFOLDER)) //todo need to explore all option to chose correct one finally DRIVE_APPFOLDER
+                .requestServerAuthCode(clientId)
+                .requestIdToken(clientId)
+                .requestScopes(Scope("https://www.googleapis.com/auth/gmail.readonly"))
+                .requestEmail()
+                .build()
 
 
         val mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
@@ -78,8 +79,9 @@ class FirstFragment : Fragment() {
         val signInIntent: Intent = mGoogleSignInClient.getSignInIntent()
         signInLauncherIntent.launch(signInIntent)
 //
-        Log.w(tag, "clientId 1111:::: $clientId" )
+        Log.w(tag, "clientId 1111:::: $clientId")
     }
+
     private val signInLauncherIntent = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
@@ -95,13 +97,14 @@ class FirstFragment : Fragment() {
             val account = completedTask.getResult(ApiException::class.java)
             updateUI(account)
         } catch (e: ApiException) {
-            Toast.makeText(requireContext(),"Exception 111 :  ${e.cause}",Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Exception 111 :  ${e.cause}", Toast.LENGTH_LONG)
+                .show()
             Log.w(tag, "handleSignInResult:error", e)
         }
     }
 
 
-    private fun updateUI(account : GoogleSignInAccount){
+    private fun updateUI(account: GoogleSignInAccount) {
         try {
             //  NOTE  if requestIdToken used in GoogleSignInOptions then use account.idToken
 //            and if requestServerAuthCode used in GoogleSignInOptions then  get value in  account.getServerAuthCode   not in idToken
@@ -110,10 +113,13 @@ class FirstFragment : Fragment() {
             val servercode = account.getServerAuthCode()
             account.email
 
-            Log.d(tag,"handleSignInResult()        account.id :: ${       account.id}         account.email ${ account.email }     account.account  ${   account.account}")
-            Log.d(tag,"handleSignInResult() idToken : $idToken")
-            Log.d(tag,"handleSignInResult() servercode : $servercode ")
-            Toast.makeText(requireContext(),"idToken 555 $idToken",Toast.LENGTH_LONG).show()
+            Log.d(
+                tag,
+                "handleSignInResult()        account.id :: ${account.id}         account.email ${account.email}     account.account  ${account.account}"
+            )
+            Log.d(tag, "handleSignInResult() idToken : $idToken")
+            Log.d(tag, "handleSignInResult() servercode : $servercode ")
+            Toast.makeText(requireContext(), "idToken 555 $idToken", Toast.LENGTH_LONG).show()
 
 
             val shareMessage = "Id Token :\n\n$idToken \n\n Server Auth Code :\n\n$servercode"
@@ -128,22 +134,41 @@ class FirstFragment : Fragment() {
                 activity?.startActivity(shareIntent)
             } catch (ignored: Exception) {
                 Log.e(tag, "Exception handleSignInResult:error ${ignored.message}")
-                    ignored.printStackTrace()
+                ignored.printStackTrace()
 
             }
         } catch (e: Exception) {
-            Toast.makeText(requireContext(),"Exception 222 :  ${e.cause}",Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Exception 222 :  ${e.cause}", Toast.LENGTH_LONG)
+                .show()
             Log.w(tag, "Exception :error", e)
         }
     }
-
-
-
-
 
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun startCredentialManagerSignIn() {
+        activity?.let {
+            val credentialSignInManager = CredentialSignInManager(it)
+            credentialSignInManager.googleSignInWithCredentialManager()
+        }
+    }
+
+
+    private fun startGoogleIdentitySignIn() {
+        activity?.let {
+            identitySignInManager = GoogleIdentitySignInManager(it)
+            identitySignInManager?.requestSignIn(identitySignInResultIntentSenderLauncher)
+        }
+    }
+
+    private val identitySignInResultIntentSenderLauncher =
+        registerForActivityResult<IntentSenderRequest, ActivityResult>(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result: ActivityResult ->
+            identitySignInManager?.handleSignInResult(result)
+        }
 }
