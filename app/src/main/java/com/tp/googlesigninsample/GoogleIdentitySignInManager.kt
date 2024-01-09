@@ -12,8 +12,10 @@ import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.AuthorizationResult
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
+import java.util.Arrays
 
 
 private const val TAG = "GoogleIdentitySignInManager"
@@ -70,6 +72,7 @@ class GoogleIdentitySignInManager(private val activity: FragmentActivity?) {
         activity?.let {
             val scopeReadOnly = Scope("https://www.googleapis.com/auth/gmail.readonly")
             val requestedScopes = listOf(scopeReadOnly)
+//            val requestedScopes = Arrays.asList(Scope(Scopes.EMAIL)
             val authorizationRequest =
                 AuthorizationRequest.builder()
                     .setRequestedScopes(requestedScopes)

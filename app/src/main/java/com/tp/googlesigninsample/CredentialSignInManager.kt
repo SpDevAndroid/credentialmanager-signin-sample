@@ -17,7 +17,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class CredentialSignInManager(private val activity: FragmentActivity?) {
+class CredentialSignInManager(private val activity: FragmentActivity?, private val callback: Callback) {
     private val TAG = "CredentialSignInManager"
     private val noneStr = "TEST"
 
@@ -81,6 +81,7 @@ class CredentialSignInManager(private val activity: FragmentActivity?) {
                             TAG,
                             "googleIdTokenCredential idToken : ${googleIdTokenCredential.idToken}"
                         )
+                        callback.onSignInSuccess()
                     } catch (e: GoogleIdTokenParsingException) {
                         Log.e(TAG, "Received an invalid google id token response", e)
                     }
@@ -95,6 +96,10 @@ class CredentialSignInManager(private val activity: FragmentActivity?) {
                 Log.e(TAG, "Unexpected type of credential")
             }
         }
+    }
+
+    interface Callback {
+        fun onSignInSuccess()
     }
 
 }

@@ -25,7 +25,7 @@ import com.google.android.gms.tasks.Task
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(), CredentialSignInManager.Callback {
 
     private var _binding: FragmentFirstBinding? = null
 
@@ -52,8 +52,8 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
 //            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 //            googleSignInSample()
-//            startCredentialManagerSignIn()
-            startGoogleIdentitySignIn()
+            startCredentialManagerSignIn()
+//            startGoogleIdentitySignIn()
 
 //            requestGmailReadOnlyAuthorization()
         }
@@ -155,7 +155,7 @@ class FirstFragment : Fragment() {
 
     private fun startCredentialManagerSignIn() {
         activity?.let {
-            val credentialSignInManager = CredentialSignInManager(it)
+            val credentialSignInManager = CredentialSignInManager(it, this)
             credentialSignInManager.googleSignInWithCredentialManager()
         }
     }
@@ -188,4 +188,10 @@ class FirstFragment : Fragment() {
         ) { result: ActivityResult ->
             identitySignInManager?.handleAuthorizationResult(result)
         }
+
+    override fun onSignInSuccess() {
+        requestGmailReadOnlyAuthorization()
+    }
+
+
 }
