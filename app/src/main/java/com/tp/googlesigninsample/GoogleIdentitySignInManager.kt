@@ -76,6 +76,7 @@ class GoogleIdentitySignInManager(private val activity: FragmentActivity?) {
             val authorizationRequest =
                 AuthorizationRequest.builder()
                     .setRequestedScopes(requestedScopes)
+                    .requestOfflineAccess(it.resources.getString(R.string.server_client_id_web))
                     .build()
             Identity.getAuthorizationClient(it)
                 .authorize(authorizationRequest)
