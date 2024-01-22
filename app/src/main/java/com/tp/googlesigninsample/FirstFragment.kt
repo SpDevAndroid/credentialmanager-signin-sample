@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.googlesigninsample.R
 import com.example.googlesigninsample.databinding.FragmentFirstBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -33,7 +34,7 @@ class FirstFragment : Fragment(), CredentialSignInManager.Callback {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val tag = "GOOGLE_SIGN_IN"
+    private val tag ="GOOGLE_SIGN_IN"
     private var identitySignInManager: GoogleIdentitySignInManager? = null
 
     override fun onCreateView(
@@ -50,9 +51,10 @@ class FirstFragment : Fragment(), CredentialSignInManager.Callback {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFirst.setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+
 //            googleSignInSample()
-            startCredentialManagerSignIn()
+//            startCredentialManagerSignIn()
 //            startGoogleIdentitySignIn()
 
 //            requestGmailReadOnlyAuthorization()
