@@ -11,7 +11,10 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.googlesigninsample.databinding.FragmentSecondBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -48,7 +51,7 @@ class SecondFragment : Fragment() {
 
 
 
-    fun readMSg(){
+    private fun readMSg(){
         if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_SMS)
             != PackageManager.PERMISSION_GRANTED
         ) {
@@ -73,51 +76,98 @@ class SecondFragment : Fragment() {
             "body", "date", "type"
         )
 
-        val cursor = contentResolver.query(
-            Telephony.Sms.CONTENT_URI,
-            projection,
-            null,
-            null,
-            "date desc"
-        )
+        lifecycleScope.launch(Dispatchers.IO) {
+            val cursor = contentResolver.query(
+                Telephony.Sms.CONTENT_URI,
+                projection,
+                null,
+                null,
+                "date desc"
+            )
 
+            val nameColumn = cursor!!.getColumnIndex("person")
+            val phoneNumberColumn = cursor!!.getColumnIndex("address")
+            val smsbodyColumn = cursor!!.getColumnIndex("body")
+            val dateColumn = cursor!!.getColumnIndex("date")
+            val typeColumn = cursor!!.getColumnIndex("type")
 
-        var counter = 0
+            val TAG = "SMS_PARSER"
+            val listBankCodes = arrayListOf("ICICIT", "ICICIB", "HDFCBK", "HDFCBN")
+            val listCardLastDigits = arrayListOf("XX5018", "XX1407")
+            val listKeyWords = arrayListOf("statement", "bill")
 
+            val finalFilteredListMessages = ArrayList<String>()
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    val address =
+                        cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS))
+                    val body = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.BODY))
+                    smsList.add("Sender: $address\nMessage: $body")
 
-        val nameColumn = cursor!!.getColumnIndex("person")
-        val phoneNumberColumn = cursor!!.getColumnIndex("address")
-        val smsbodyColumn = cursor!!.getColumnIndex("body")
-        val dateColumn = cursor!!.getColumnIndex("date")
-        val typeColumn = cursor!!.getColumnIndex("type")
+//               val name = (cursor.getString(nameColumn))
+//                val dateColumn = (cursor.getString(dateColumn))
+//                val phoneNumberColumn = (cursor.getString(phoneNumberColumn))
+//                val smsbodyColumn  = (cursor.getString(smsbodyColumn))
+//                val typeColumn  = (cursor.getString(typeColumn))
 
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val address = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS))
-                val body = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.BODY))
-                smsList.add("Sender: $address\nMessage: $body")
-
-               val name = (cursor.getString(nameColumn))
-                val dateColumn = (cursor.getString(dateColumn))
-                val phoneNumberColumn = (cursor.getString(phoneNumberColumn))
-                val smsbodyColumn  = (cursor.getString(smsbodyColumn))
-                val typeColumn  = (cursor.getString(typeColumn))
-
-
-
-                Log.d("mvv1"," address $address  ,,,   ")
+                    Log.d(TAG, " address $address")
+                    if (isValidBank(address, listBankCodes) && isKeyWordPresent(
+                            body,
+                            listKeyWords
+                        ) && isCardLastDigitsPresent(body, listCardLastDigits)
+                    ) {
+                        Log.d(TAG, "isValidSMS = true")
+                        finalFilteredListMessages.add(body)
+                    }
 
 //                Log.d("mvv12"," name $name  dateColumn  $dateColumn   phoneNumberColumn   $phoneNumberColumn   smsbodyColumn  $smsbodyColumn   typeColumn  $typeColumn   ")
 
 
-                counter++
-            } while (cursor.moveToNext()   )
+                } while (cursor.moveToNext())
+
+            }
+
+
+
+
+            Log.d(TAG, " finalFilteredListMessages size : ${finalFilteredListMessages.size}")
+            Log.d(TAG, "smsList size >>>>>  ${smsList.size}  ")
+
+            launch(Dispatchers.Main) {
+                val showStr =
+                    "Total SMS List size :  ${smsList.size} \n\n\nFinal Filtered SMS List size : ${finalFilteredListMessages.size}"
+                binding.textviewSecond.text = showStr
+            }
+
+            cursor.close()
         }
+    }
 
+    private fun isValidBank(smsSenderStr : String, listBankCodes : ArrayList<String>) : Boolean {
+        for(bankCode in listBankCodes) {
+            if(smsSenderStr.lowercase().contains(bankCode.lowercase())) {
+                return true
+            }
+        }
+        return false
+    }
 
-        Log.d("mvv1"," smsList >>>>>  ${smsList.size}  ")
-        cursor?.close()
+    private fun isKeyWordPresent(smsBodyStr : String, listKeywords : ArrayList<String>) : Boolean {
+        for(keyword in listKeywords) {
+            if(smsBodyStr.lowercase().contains(keyword.lowercase())) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun isCardLastDigitsPresent(smsBodyStr : String, listCardLastDigits : ArrayList<String>) : Boolean {
+        for(cardNumberLastDigits in listCardLastDigits) {
+            if(smsBodyStr.lowercase().contains(cardNumberLastDigits.lowercase())) {
+                return true
+            }
+        }
+        return false
     }
 
 

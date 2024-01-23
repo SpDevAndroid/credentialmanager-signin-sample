@@ -50,9 +50,10 @@ class FirstFragment : Fragment(), CredentialSignInManager.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        /** Transferred control to 2nd fragment For SMS retreiver sample **/
+        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
 
+        binding.buttonFirst.setOnClickListener {
 //            googleSignInSample()
 //            startCredentialManagerSignIn()
 //            startGoogleIdentitySignIn()
