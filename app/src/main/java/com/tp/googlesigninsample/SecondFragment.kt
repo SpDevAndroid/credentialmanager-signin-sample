@@ -137,6 +137,10 @@ class SecondFragment : Fragment() {
                 val showStr =
                     "Total SMS List size :  ${smsList.size} \n\n\nFinal Filtered SMS List size : ${finalFilteredListMessages.size}"
                 binding.textviewSecond.text = showStr
+
+                for (body in finalFilteredListMessages) {
+                    Log.d(TAG, "$body")
+                }
             }
 
             cursor.close()
